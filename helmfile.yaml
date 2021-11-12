@@ -1,0 +1,19 @@
+repositories:
+- name: stable
+  url: https://registry.dev.teko.vn/repository/helmproxy_stable/
+- name: teko
+  url: https://registry.dev.teko.vn/repository/helmproxy_teko/
+- name: bitnami
+  url: https://registry.dev.teko.vn/repository/helmproxy_bitnami/
+
+
+helmDefaults:
+  verify: true
+  wait: true
+  timeout: 900
+  atomic: true
+  # recreatePods: true
+  force: true
+
+helmfiles:
+- path: echo-service/helmfile.yaml

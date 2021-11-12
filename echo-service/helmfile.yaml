@@ -1,0 +1,6 @@
+releases:
+- name: echo
+  namespace: echo-service
+  values:
+  - echo.yaml
+  chart: teko/teko-backend-v2
