@@ -4,7 +4,7 @@ releases:
   - namespace.yaml
   chart: teko/teko-backend-v3
 - name: echo
-  namespace: echo-service-dup
+  namespace: echo-service-2
   values:
   - echo.yaml
   chart: teko/teko-backend-v2

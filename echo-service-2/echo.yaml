@@ -28,9 +28,9 @@ ingress:
   tls:
   - secretName: teko-tls
     hosts:
-    - echo-dup.a.teko.vn
+    - echo-dup.{{ env "ENVIRONMENT" }}.teko.vn
   rules:
-  - host: echo-dup.a.teko.vn
+  - host: echo-dup.{{ env "ENVIRONMENT" }}.teko.vn
     paths:
     - path: /
       serviceName: echo-app
