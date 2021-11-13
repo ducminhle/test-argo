@@ -6,5 +6,5 @@ releases:
 - name: echo
   namespace: echo-service-2
   values:
-  - echo.yaml
+  - echo.yaml.gotmpl
   chart: teko/teko-backend-v2
