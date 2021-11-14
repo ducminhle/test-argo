@@ -5,6 +5,7 @@ releases:
   chart: teko/teko-backend-v3
 - name: echo
   namespace: echo-service
+  forceNamespace: echo-service
   values:
   - echo.yaml
   chart: teko/teko-backend-v2
