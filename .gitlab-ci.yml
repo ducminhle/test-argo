@@ -1,127 +1,127 @@
-stages:
-  - namespace
-  - secret
-  - upgrade
-  - apply
-  - clean
+# stages:
+#   - namespace
+#   - secret
+#   - upgrade
+#   - apply
+#   - clean
 
-.vnpaycloud-auth: &vnpaycloud-auth
-  - mkdir -p /root/.kube
-  - echo $VNPAYCLOUD_CREDENTIALS | base64 -d > /root/.kube/config
+# .vnpaycloud-auth: &vnpaycloud-auth
+#   - mkdir -p /root/.kube
+#   - echo $VNPAYCLOUD_CREDENTIALS | base64 -d > /root/.kube/config
 
-secrets:
-  stage: secret
-  image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
-  variables:
-    WORKLOAD: dev
-  script:
-    - ./_scripts/apply-secrets
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master" && $RUN != "all"
-      changes:
-        - "**/__secrets/*"
-        - "**/__secrets/**/*"
-  retry: 2
-  tags:
-    - sr-infra-runner
+# secrets:
+#   stage: secret
+#   image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
+#   variables:
+#     WORKLOAD: dev
+#   script:
+#     - ./_scripts/apply-secrets
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master" && $RUN != "all"
+#       changes:
+#         - "**/__secrets/*"
+#         - "**/__secrets/**/*"
+#   retry: 2
+#   tags:
+#     - sr-infra-runner
 
-secrets all:
-  stage: secret
-  image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
-  variables:
-    WORKLOAD: dev
-  script:
-    - ./_scripts/apply-secrets-all
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master" && $RUN == "all"
-  retry: 2
-  tags:
-    - ci-develop2
+# secrets all:
+#   stage: secret
+#   image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
+#   variables:
+#     WORKLOAD: dev
+#   script:
+#     - ./_scripts/apply-secrets-all
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master" && $RUN == "all"
+#   retry: 2
+#   tags:
+#     - ci-develop2
 
-.apply_template: &apply
-  image: asia.gcr.io/teko-registry/sre/toy:2.0
-  # before_script:
-  #   - *vnpaycloud-auth
-  script:
-    - helmfile repos
-    - helmfile apply --context=3 --skip-deps
-  tags:
-    - ci-general
-  retry: 2
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+# .apply_template: &apply
+#   image: asia.gcr.io/teko-registry/sre/toy:2.0
+#   # before_script:
+#   #   - *vnpaycloud-auth
+#   script:
+#     - helmfile repos
+#     - helmfile apply --context=3 --skip-deps
+#   tags:
+#     - ci-general
+#   retry: 2
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master"
 
-apply:partial:
-  <<: *apply
-  stage: upgrade
-  script:
-    - helmfile repos
-    - ./_scripts/upgrade-workloads
-  tags:
-    - ci-develop2
+# apply:partial:
+#   <<: *apply
+#   stage: upgrade
+#   script:
+#     - helmfile repos
+#     - ./_scripts/upgrade-workloads
+#   tags:
+#     - ci-develop2
 
-apply:all:
-  stage: apply
-  variables:
-    PROVIDER: _vnpaycloud
-  image:
-    name: asia.gcr.io/teko-registry/sre/toy:2.0
-  script:
-    - |
-      envs='envs'
-      find . -name '*.yaml' -exec cp {} {}.gotmpl \;
-      find **/ -name 'helmfile.yaml' -exec cp {} {}.raw \;
-      while read environment; do
-        find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
-        find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${environment}-/g" {} \;
-        find **/ -name 'helmfile.yaml' -exec sed -i "s/yaml/yaml.gotmpl/g" {} \;
-        export ENVIRONMENT=$environment
-        echo $ENVIRONMENT
-        helmfile repos
-        helmfile apply --context=3 --skip-deps
-      done < $envs
-      find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
-  retry: 2
-  except:
-    changes:
-      - "**/__secrets/*"
-      - "_gateway/**/*"
-  tags:
-    - ci-develop2
-  only:
-    refs:
-      - master
-  when: manual
-  allow_failure: true
+# apply:all:
+#   stage: apply
+#   variables:
+#     PROVIDER: _vnpaycloud
+#   image:
+#     name: asia.gcr.io/teko-registry/sre/toy:2.0
+#   script:
+#     - |
+#       envs='envs'
+#       find . -name '*.yaml' -exec cp {} {}.gotmpl \;
+#       find **/ -name 'helmfile.yaml' -exec cp {} {}.raw \;
+#       while read environment; do
+#         find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
+#         find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${environment}-/g" {} \;
+#         find **/ -name 'helmfile.yaml' -exec sed -i "s/yaml/yaml.gotmpl/g" {} \;
+#         export ENVIRONMENT=$environment
+#         echo $ENVIRONMENT
+#         helmfile repos
+#         helmfile apply --context=3 --skip-deps
+#       done < $envs
+#       find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
+#   retry: 2
+#   except:
+#     changes:
+#       - "**/__secrets/*"
+#       - "_gateway/**/*"
+#   tags:
+#     - ci-develop2
+#   only:
+#     refs:
+#       - master
+#   when: manual
+#   allow_failure: true
 
-clean:
-  stage: clean
-  variables:
-    PROVIDER: _vnpaycloud
-  image:
-    name: asia.gcr.io/teko-registry/sre/toy:2.0
-  script:
-    - |
-      find . -name '*.yaml' -exec cp {} {}.gotmpl \;
-      find **/ -name 'helmfile.yaml' -exec cp {} {}.raw \;
-      git diff $CI_COMMIT_BEFORE_SHA HEAD -- envs | grep '^[-]' | grep -Ev '^(---)' | sed -e 's/[+-]//' | while read environment
-      do
-        find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
-        find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${environment}-/g" {} \;
-        find **/ -name 'helmfile.yaml' -exec sed -i "s/yaml/yaml.gotmpl/g" {} \;
-        export ENVIRONMENT=$environment
-        helmfile repos
-        helmfile destroy
-        sed -i "s/namespace: /namespace: ${environment}-/g" namespaces.yaml
-        helm template ns  -f namespaces.yaml teko/teko-backend-v3
-        helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl diff -f - || true
-        helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl delete  -f -
-      done
-      find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
-  only:
-    refs:
-      - master
-    changes:
-      - "envs"
-  tags:
-    - ci-develop2
+# clean:
+#   stage: clean
+#   variables:
+#     PROVIDER: _vnpaycloud
+#   image:
+#     name: asia.gcr.io/teko-registry/sre/toy:2.0
+#   script:
+#     - |
+#       find . -name '*.yaml' -exec cp {} {}.gotmpl \;
+#       find **/ -name 'helmfile.yaml' -exec cp {} {}.raw \;
+#       git diff $CI_COMMIT_BEFORE_SHA HEAD -- envs | grep '^[-]' | grep -Ev '^(---)' | sed -e 's/[+-]//' | while read environment
+#       do
+#         find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
+#         find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${environment}-/g" {} \;
+#         find **/ -name 'helmfile.yaml' -exec sed -i "s/yaml/yaml.gotmpl/g" {} \;
+#         export ENVIRONMENT=$environment
+#         helmfile repos
+#         helmfile destroy
+#         sed -i "s/namespace: /namespace: ${environment}-/g" namespaces.yaml
+#         helm template ns  -f namespaces.yaml teko/teko-backend-v3
+#         helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl diff -f - || true
+#         helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl delete  -f -
+#       done
+#       find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
+#   only:
+#     refs:
+#       - master
+#     changes:
+#       - "envs"
+#   tags:
+#     - ci-develop2

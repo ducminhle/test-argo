@@ -1,14 +1,11 @@
 imagePullSecrets:
 - name: asia.gcr.io
 image:
-  repository: gcr.io/google_containers/echoserver
+  repository: gcr.io/google-samples/node-hello:1.0
   tag: "1.0"
 deploys:
 - name: app
   replicasCount: 1
-  args:
-  - -text="hello ${STR}"
-  - -listen=:8080
   service:
     type: ClusterIP
     containerPort: 8080
@@ -24,7 +21,10 @@ deploys:
       cpu: 50m
 
 env:
-  STR: test
+  - name: DEMO_GREETING
+    value: "Hello from echo-service"
+  - name: DEMO_FAREWELL
+    value: "Such a sweet sorrow"
 
 ingress:
   enabled: true

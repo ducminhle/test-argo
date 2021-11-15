@@ -1,7 +1,7 @@
 imagePullSecrets:
 - name: asia.gcr.io
 image:
-  repository: gcr.io/google_containers/echoserver
+  repository: gcr.io/google-samples/node-hello:1.0
   tag: "1.0"
 deploys:
 - name: app
@@ -22,6 +22,12 @@ deploys:
     limits:
       memory: 64Mi
       cpu: 50m
+
+env:
+  - name: DEMO_GREETING
+    value: "Hello from echo-service-2"
+  - name: DEMO_FAREWELL
+    value: "Such a sweet sorrow"
 
 ingress:
   enabled: true
