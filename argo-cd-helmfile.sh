@@ -139,6 +139,9 @@ case $phase in
   "init")
     echoerr "starting init"
 
+    find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}-/g" {} \;
+    find **/ -name 'helmfile.yaml' -exec sed -i "s/forceNamespace: /forceNamespace: ${ENVIRONMENT}-/g" {} \;
+
     # ensure dir(s)
     # rm -rf "${HELM_HOME}"
     if [[ ! -d "${HELM_HOME}" ]]; then
