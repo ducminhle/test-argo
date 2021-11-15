@@ -21,10 +21,8 @@ deploys:
       cpu: 50m
 
 env:
-  - name: DEMO_GREETING
-    value: "Hello from echo-service-2"
-  - name: DEMO_FAREWELL
-    value: "Such a sweet sorrow"
+  DEMO_GREETING: Hello from echo-service-2
+  DEMO_FAREWELL: Such a sweet sorrow
 
 ingress:
   enabled: true
