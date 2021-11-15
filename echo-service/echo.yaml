@@ -7,7 +7,7 @@ deploys:
 - name: app
   replicasCount: 1
   args:
-  - -text="hello world"
+  - -text="hello ${STR}"
   - -listen=:8080
   service:
     type: ClusterIP
@@ -22,6 +22,9 @@ deploys:
     limits:
       memory: 64Mi
       cpu: 50m
+
+env:
+  STR: test
 
 ingress:
   enabled: true
