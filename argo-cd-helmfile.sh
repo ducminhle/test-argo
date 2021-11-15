@@ -237,6 +237,7 @@ case $phase in
     fi
 
     find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}-/g" {} \;
+    find **/ -name 'namespace.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}-/g" {} \;
 
     ${helmfile} \
       template \
