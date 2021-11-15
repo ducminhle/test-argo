@@ -236,7 +236,7 @@ case $phase in
       INTERNAL_HELM_TEMPLATE_OPTIONS="${INTERNAL_HELM_TEMPLATE_OPTIONS} ${INTERNAL_HELM_API_VERSIONS}"
     fi
 
-    find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}}-/g" {} \;
+    find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}-/g" {} \;
 
     ${helmfile} \
       template \
