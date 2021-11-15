@@ -5,7 +5,7 @@ releases:
   chart: teko/teko-backend-v3
 - name: echo
   namespace: echo-service-2
-  forceNamespace: {{ env "ENVIRONMENT" }}-echo-service-2
+  forceNamespace: echo-service-2
   values:
   - echo.yaml.gotmpl
   chart: teko/teko-backend-v2
