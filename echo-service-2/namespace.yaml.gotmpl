@@ -1,5 +1,5 @@
 quotas:
-  - namespace: echo-service-2
+  - namespace: {{ env "ENVIRONMENT" }}-echo-service-2
     resources:
         requests.cpu: 1
         requests.memory: 1Gi
