@@ -48,6 +48,7 @@ deploy:
       envs='envs'
       while read environment; do
         export ENVIRONMENT=$environment
+        echo "Deploy all services in $ENVIRONMENT"
         envsubst < argo-cd.yaml | kubectl apply -f -
       done < $envs
   retry: 2
