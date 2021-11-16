@@ -50,6 +50,7 @@ deploy:
         export ENVIRONMENT=$environment
         echo "Deploy all services in $ENVIRONMENT"
         envsubst < argo-cd.yaml | kubectl apply -f -
+        sleep 10
       done < $envs
   retry: 2
   tags:
