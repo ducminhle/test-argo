@@ -41,7 +41,7 @@ deploy:
   variables:
     PROVIDER: _vnpaycloud
   image:
-    name: ubuntu:20.04
+    name: bitnami/kubectl:1.20-debian-10
   script:
     - |
       apt update && apt install gettext-base -y
