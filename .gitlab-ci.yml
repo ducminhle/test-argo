@@ -44,6 +44,7 @@ deploy:
     name: ubuntu:20.04
   script:
     - |
+      apt update && apt install gettext-base -y
       envs='envs'
       while read environment; do
         export ENVIRONMENT=$environment
