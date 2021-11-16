@@ -20,6 +20,9 @@ deploys:
       memory: 64Mi
       cpu: 50m
 
+env:
+  TEST: secret:test.TEST
+
 ingress:
   enabled: true
   tls:
