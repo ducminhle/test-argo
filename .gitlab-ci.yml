@@ -56,8 +56,6 @@ deploy:
     - if: $CI_COMMIT_BRANCH == "master"
       changes:
         - "envs"
-  when: manual
-  allow_failure: true
 
 # .apply_template: &apply
 #   image: asia.gcr.io/teko-registry/sre/toy:2.0
