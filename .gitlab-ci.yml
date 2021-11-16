@@ -41,7 +41,7 @@ deploy:
   variables:
     PROVIDER: _vnpaycloud
   image:
-    name: bitnami/kubectl:1.20-debian-10
+    name: dtzar/helm-kubectl:3.7
   script:
     - |
       apt update && apt install gettext-base -y
