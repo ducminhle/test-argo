@@ -50,9 +50,6 @@ deploy:
         envsubst < argo-cd.yaml | kubectl apply -f -
       done < $envs
   retry: 2
-  except:
-    changes:
-      - "envs"
   tags:
     - ci-alpha
   rules:
