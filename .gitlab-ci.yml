@@ -41,7 +41,7 @@ deploy:
   variables:
     PROVIDER: _vnpaycloud
   image:
-    name: asia.gcr.io/teko-registry/sre/toy:2.0
+    name: ubuntu:20.04
   script:
     - |
       envs='envs'
