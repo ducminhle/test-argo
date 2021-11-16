@@ -139,14 +139,14 @@ case $phase in
   "init")
     echoerr "starting init"
 
-    check_raw=`find **/ -name 'helmfile.yaml.raw'`
-    if [ -z "$check_raw" ]; then
-      echo "No helmfile.yaml.raw found"
-      find **/ -name 'helmfile.yaml' -exec cp {} {}.raw \;
-    else
-      echo "helmfile.yaml.raw found"
-      find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
-    fi
+    # check_raw=`find **/ -name 'helmfile.yaml.raw'`
+    # if [ -z "$check_raw" ]; then
+    #   echo "No helmfile.yaml.raw found"
+    #   find **/ -name 'helmfile.yaml' -exec cp {} {}.raw \;
+    # else
+    #   echo "helmfile.yaml.raw found"
+    #   find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
+    # fi
 
     find **/ -name 'helmfile.yaml' -exec sed -i "s/forceNamespace: /forceNamespace: ${ENVIRONMENT}-/g" {} \;
 
