@@ -32,6 +32,8 @@ secrets all:
     - ./_scripts/apply-secrets-all
   rules:
     - if: $CI_COMMIT_BRANCH == "master" && $RUN == "all"
+      changes:
+        - "envs"
   retry: 2
   tags:
     - ci-alpha
