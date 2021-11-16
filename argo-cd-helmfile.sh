@@ -247,14 +247,14 @@ case $phase in
       INTERNAL_HELM_TEMPLATE_OPTIONS="${INTERNAL_HELM_TEMPLATE_OPTIONS} ${INTERNAL_HELM_API_VERSIONS}"
     fi
 
-    check_raw=`find **/ -name 'namespace.yaml.raw'`
-    if [ -z "$check_raw" ]; then
-      echo "No namespace.yaml.raw found"
-      find **/ -name 'namespace.yaml' -exec cp {} {}.raw \;
-    else
-      echo "namespace.yaml.raw found"
-      find **/ -name 'namespace.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/namespace.yaml' \;
-    fi
+    # check_raw=`find **/ -name 'namespace.yaml.raw'`
+    # if [ -z "$check_raw" ]; then
+    #   echo "No namespace.yaml.raw found"
+    #   find **/ -name 'namespace.yaml' -exec cp {} {}.raw \;
+    # else
+    #   echo "namespace.yaml.raw found"
+    #   find **/ -name 'namespace.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/namespace.yaml' \;
+    # fi
 
     find **/ -name 'namespace.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}-/g" {} \;
 
