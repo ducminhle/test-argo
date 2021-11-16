@@ -7,5 +7,5 @@ releases:
   namespace: echo-service
   forceNamespace: echo-service
   values:
-  - echo.yaml
+  - echo.yaml.gotmpl
   chart: teko/teko-backend-v2

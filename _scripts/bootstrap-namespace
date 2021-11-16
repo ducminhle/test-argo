@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Json schema
+validation='{".cpuLimits":{"exclusiveMinimum":0,"maximum":8,"minimum":1,"type":"number"},".memLimits":{"pattern":"^(1|2|3|4|5|10)Gi$","type":"string"},".name":{"maxLength":45,"type":"string"},".resources":{"properties":{"limits.cpu":{"exclusiveMinimum":1,"maximum":8,"minimum":1,"type":"number"},"limits.memory":{"pattern":"^(1|2|3|4|5|10|15|20)Gi$","type":"string"},"requests.cpu":{"exclusiveMinimum":0,"maximum":8,"minimum":1,"type":"number"},"requests.memory":{"pattern":"^(1|2|3|4|5|10|15|20)Gi$","type":"string"}},"type":"object"},"properties":{"quotas":{"items":{"properties":{"namespace":{"maxLength":45,"type":"string"},"resources":{"properties":{"limits.cpu":{"exclusiveMinimum":1,"maximum":8,"minimum":1,"type":"number"},"limits.memory":{"pattern":"^(1|2|3|4|5|10|15|20)Gi$","type":"string"},"requests.cpu":{"exclusiveMinimum":0,"maximum":8,"minimum":1,"type":"number"},"requests.memory":{"pattern":"^(1|2|3|4|5|10)Gi$","type":"string"}},"type":"object"}},"type":"object"},"type":["array","object"]}},"required":["quotas"],"type":"object"}'
+
+envs='envs'
+
+# store namespaces raw
+cp namespaces.yaml namespaces.yaml.raw
+
+echo "$validation" > teko-v2.schema-ns.json
+yq eval namespaces.yaml -j > namespaces.json
+echo "jv teko-v2.schema-ns.json namespaces.json"
+
+while read env; do
+    cp namespaces.yaml.raw namespaces.yaml
+    sed -i "s/namespace: /namespace: ${env}-/g" namespaces.yaml
+    cat namespaces.yaml
+
+    # validation
+    if [[ $CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" ]];
+    then
+        jv teko-v2.schema-ns.json namespaces.json
+        helm repo add teko https://teko-kubernetes-charts.storage.googleapis.com
+        helm repo update
+        helm template ns  -f namespaces.yaml teko/teko-backend-v3
+        helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl apply --server-dry-run -f -
+    fi
+
+    # Apply
+    if [[ $CI_COMMIT_BRANCH == "master" ]];
+    then
+        jv teko-v2.schema-ns.json namespaces.json
+        helm repo add teko https://teko-kubernetes-charts.storage.googleapis.com
+        helm repo update
+        helm template ns  -f namespaces.yaml teko/teko-backend-v3
+        helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl apply --server-dry-run -f -
+        helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl diff -f - || true
+        helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl apply  -f -
+        echo "Trigger cert provision"
+        curl -X POST \
+         -F token=${TRIGGER_TOKEN} \
+         -F ref=master -F "variables[ENV]=dev"  \
+         https://git.teko.vn/api/v4/projects/1836/trigger/pipeline
+    fi
+done < $envs
+
+mv namespaces.yaml.raw namespaces.yaml

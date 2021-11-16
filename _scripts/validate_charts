@@ -1,0 +1,18 @@
+set -ex
+
+for fchange in $(git diff --name-only refs/remotes/origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME | grep -i yaml | grep -v "helmfile\|OWNERS")
+do
+    if grep -q "imagePullSecrets" $fchange
+    then
+      yq . $fchange > workload.values.json
+      jv teko-v2.schema.json workload.values.json
+      jq '.cronJobs' workload.values.json | grep "\"schedule\"\:" | sed 's/\s\{1,\}\"schedule\"\:\s\"//g; s/\"\,//g' > cron.txt
+      while read line
+      do
+        if [[ "${line}" == "* * * * *" ]] || [[ "${line}" == "*/1 * * * *" ]] || [[ "${line}" == "*/2 * * * *" ]] || [[ "${line}" == "*/3 * * * *" ]] || [[ "${line}" == "*/4 * * * *" ]]; then
+          echo "CronJob is invalid"
+          exit 1
+        fi
+      done < cron.txt
+    fi
+done

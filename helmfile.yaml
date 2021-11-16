@@ -17,4 +17,3 @@ helmDefaults:
 
 helmfiles:
 - path: echo-service/helmfile.yaml
-- path: echo-service-2/helmfile.yaml

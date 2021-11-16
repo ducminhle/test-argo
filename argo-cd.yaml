@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: test-argo
+  name: $ENVIRONMENT
   namespace: teko-system
 spec:
   project: default
@@ -13,7 +13,7 @@ spec:
       name: helmfile-sandbox
       env:
         - name: ENVIRONMENT
-          value: a
+          value: $ENVIRONMENT
   destination:
     server: 'https://kubernetes.default.svc'
   syncPolicy:

@@ -20,18 +20,14 @@ deploys:
       memory: 64Mi
       cpu: 50m
 
-env:
-  DEMO_GREETING: Hello from echo-service-2
-  DEMO_FAREWELL: Such a sweet sorrow
-
 ingress:
   enabled: true
   tls:
   - secretName: teko-tls
     hosts:
-    - echo-test.{{ env "ENVIRONMENT" }}.teko.vn
+    - echo.{{ env "ENVIRONMENT" }}.teko.vn
   rules:
-  - host: echo-test.{{ env "ENVIRONMENT" }}.teko.vn
+  - host: echo.{{ env "ENVIRONMENT" }}.teko.vn
     paths:
     - path: /
       serviceName: echo-app

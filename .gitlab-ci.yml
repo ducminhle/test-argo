@@ -1,42 +1,66 @@
-# stages:
-#   - namespace
-#   - secret
-#   - upgrade
-#   - apply
-#   - clean
+stages:
+  - deploy
+  - secret
+  # - clean
 
-# .vnpaycloud-auth: &vnpaycloud-auth
-#   - mkdir -p /root/.kube
-#   - echo $VNPAYCLOUD_CREDENTIALS | base64 -d > /root/.kube/config
+.vnpaycloud-auth: &vnpaycloud-auth
+  - mkdir -p /root/.kube
+  - echo $VNPAYCLOUD_CREDENTIALS | base64 -d > /root/.kube/config
 
-# secrets:
-#   stage: secret
-#   image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
-#   variables:
-#     WORKLOAD: dev
-#   script:
-#     - ./_scripts/apply-secrets
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "master" && $RUN != "all"
-#       changes:
-#         - "**/__secrets/*"
-#         - "**/__secrets/**/*"
-#   retry: 2
-#   tags:
-#     - sr-infra-runner
+secrets:
+  stage: secret
+  image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
+  variables:
+    WORKLOAD: dev
+  script:
+    - ./_scripts/apply-secrets
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master" && $RUN != "all"
+      changes:
+        - "**/__secrets/*"
+        - "**/__secrets/**/*"
+  retry: 2
+  tags:
+    - ci-alpha
 
-# secrets all:
-#   stage: secret
-#   image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
-#   variables:
-#     WORKLOAD: dev
-#   script:
-#     - ./_scripts/apply-secrets-all
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "master" && $RUN == "all"
-#   retry: 2
-#   tags:
-#     - ci-develop2
+secrets all:
+  stage: secret
+  image: asia.gcr.io/teko-registry/sre/secret-decryptor:v2.1
+  variables:
+    WORKLOAD: dev
+  script:
+    - ./_scripts/apply-secrets-all
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master" && $RUN == "all"
+  retry: 2
+  tags:
+    - ci-alpha
+
+deploy:
+  stage: deploy
+  variables:
+    PROVIDER: _vnpaycloud
+  image:
+    name: asia.gcr.io/teko-registry/sre/toy:2.0
+  script:
+    - |
+      envs='envs'
+      while read environment; do
+        export ENVIRONMENT=$environment
+        envsubst < argo-cd.yaml | kubectl apply -f -
+      done < $envs
+  retry: 2
+  except:
+    changes:
+      - "envs"
+  tags:
+    - ci-alpha
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - "envs"
+  when: manual
+  allow_failure: true
 
 # .apply_template: &apply
 #   image: asia.gcr.io/teko-registry/sre/toy:2.0
