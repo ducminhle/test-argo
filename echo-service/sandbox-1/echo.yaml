@@ -1,2 +1,6 @@
+image:
+  repository: gcr.io/google_containers/echoserver
+  tag: "1.1"
+
 env:
-  TEST: test
+  TEST: test-sandbox-1
