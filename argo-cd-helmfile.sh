@@ -265,7 +265,7 @@ case $phase in
       ${HELMFILE_TEMPLATE_OPTIONS}
     ;;
     
-    find **/ -name 'namespace.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/namespace.yaml' \;
+    # find **/ -name 'namespace.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/namespace.yaml' \;
 
   *)
     echoerr "invalid invocation"
