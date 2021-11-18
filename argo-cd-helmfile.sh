@@ -264,6 +264,8 @@ case $phase in
       --args "${INTERNAL_HELM_TEMPLATE_OPTIONS} ${HELM_TEMPLATE_OPTIONS}" \
       ${HELMFILE_TEMPLATE_OPTIONS}
     ;;
+    
+    find **/ -name 'namespace.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/namespace.yaml' \;
 
   *)
     echoerr "invalid invocation"
