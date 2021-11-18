@@ -1,8 +1,8 @@
 releases:
-- name: echo-service
-  values:
-  - namespace.yaml
-  chart: teko/teko-backend-v3
+# - name: echo-service
+#   values:
+#   - namespace.yaml
+#   chart: teko/teko-backend-v3
 - name: echo
   namespace: echo-service
   forceNamespace: echo-service
