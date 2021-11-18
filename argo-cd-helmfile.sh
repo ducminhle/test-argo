@@ -54,7 +54,7 @@ if [[ -z "${1}" ]]; then
   exit 1
 fi
 
-SCRIPT_NAME=$(basename "${0}")-$ENVIRONMENT
+SCRIPT_NAME=$(basename "${0}")
 
 # expand nested variables
 if [[ "${HELMFILE_GLOBAL_OPTIONS}" ]]; then
