@@ -1,0 +1,7 @@
+quotas:
+  - namespace: echo-service
+    resources:
+        requests.cpu: 1
+        requests.memory: 1Gi
+        limits.cpu: 2
+        limits.memory: 5Gi
