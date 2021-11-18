@@ -54,7 +54,7 @@ if [[ -z "${1}" ]]; then
   exit 1
 fi
 
-SCRIPT_NAME=$(basename "${0}")
+SCRIPT_NAME=$(basename "${0}")-$ENVIRONMENT
 
 # expand nested variables
 if [[ "${HELMFILE_GLOBAL_OPTIONS}" ]]; then
@@ -149,17 +149,6 @@ case $phase in
     fi
 
     find **/ -name 'helmfile.yaml' -exec sed -i "s/forceNamespace: /forceNamespace: ${ENVIRONMENT}-/g" {} \;
-
-    check_raw=`find **/ -name 'namespace.yaml.raw'`
-    if [ -z "$check_raw" ]; then
-      echo "No namespace.yaml.raw found"
-      find **/ -name 'namespace.yaml' -exec cp {} {}.raw \;
-    else
-      echo "namespace.yaml.raw found"
-      find **/ -name 'namespace.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/namespace.yaml' \;
-    fi
-
-    find **/ -name 'namespace.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}-/g" {} \;
 
     # ensure dir(s)
     # rm -rf "${HELM_HOME}"
@@ -257,6 +246,17 @@ case $phase in
       done
       INTERNAL_HELM_TEMPLATE_OPTIONS="${INTERNAL_HELM_TEMPLATE_OPTIONS} ${INTERNAL_HELM_API_VERSIONS}"
     fi
+
+    check_raw=`find **/ -name 'namespace.yaml.raw'`
+    if [ -z "$check_raw" ]; then
+      echo "No namespace.yaml.raw found"
+      find **/ -name 'namespace.yaml' -exec cp {} {}.raw \;
+    else
+      echo "namespace.yaml.raw found"
+      find **/ -name 'namespace.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/namespace.yaml' \;
+    fi
+
+    find **/ -name 'namespace.yaml' -exec sed -i "s/namespace: /namespace: ${ENVIRONMENT}-/g" {} \;
 
     ${helmfile} \
       template \
