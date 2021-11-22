@@ -1,0 +1,16 @@
+---
+sandboxes:
+  - name: sandbox-1
+    deploy-all: true
+  # - name: sandbox-2
+  #   deploy-all: true
+  # - name: sandbox-3
+  #   deploy-all: true
+  # - name: sandbox-4
+  #   deploy-all: true
+  # - name: sandbox-5
+  #   deploy-all: true
+  # - name: sandbox-6
+  #   deploy-all: false
+  #   projects:
+  #   - echo-service

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: $ENVIRONMENT
+  name: $SANDBOX
   namespace: teko-system
 spec:
   project: default
@@ -12,8 +12,8 @@ spec:
     plugin:
       name: helmfile-sandbox
       env:
-        - name: ENVIRONMENT
-          value: $ENVIRONMENT
+        - name: SANDBOX
+          value: $SANDBOX
   destination:
     server: 'https://kubernetes.default.svc'
   syncPolicy:

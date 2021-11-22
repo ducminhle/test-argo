@@ -9,5 +9,5 @@ releases:
   missingFileHandler: Warn
   values:
   - echo.yaml.gotmpl
-  - ./{{ env "ENVIRONMENT" }}/echo.yaml
+  - ./{{ env "SANDBOX" }}/echo.yaml
   chart: teko/teko-backend-v2

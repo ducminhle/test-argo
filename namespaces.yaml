@@ -1,0 +1,13 @@
+quotas:
+  - namespace: echo-service
+    resources:
+        requests.cpu: 1
+        requests.memory: 1Gi
+        limits.cpu: 2
+        limits.memory: 2Gi
+  - namespace: echo-service-2
+    resources:
+        requests.cpu: 1
+        requests.memory: 1Gi
+        limits.cpu: 2
+        limits.memory: 2Gi

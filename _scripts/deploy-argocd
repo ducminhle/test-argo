@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+
+import yaml
+import os
+import sys
+
+with open("sandboxes.yaml") as stream:
+    try:
+        sandboxes = yaml.safe_load(stream)['sandboxes']
+        for sandbox in sandboxes:
+            sandbox_name = sandbox['name']
+            deploy_all = sandbox['deploy-all']
+            # set environment variables
+            if deploy_all:
+                os.environ['SANDBOX'] = sandbox_name
+                os.system('export SANDBOX=' + sandbox_name)
+                os.system('envsubst < argo-cd.yaml | kubectl apply -f -')
+            else:
+              #TO DO: add deploy some services not all
+              print("Nothing to do with " + sandbox_name)
+    except yaml.YAMLError as exc:
+        print(exc)

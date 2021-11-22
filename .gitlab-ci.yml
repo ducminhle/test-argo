@@ -1,11 +1,35 @@
 stages:
-  - deploy
+  - namespace
   - secret
+  - deploy
   # - clean
 
 .vnpaycloud-auth: &vnpaycloud-auth
   - mkdir -p /root/.kube
   - echo $VNPAYCLOUD_CREDENTIALS | base64 -d > /root/.kube/config
+
+provision:namespace:
+  stage: namespace
+  image: asia.gcr.io/teko-registry/sre/tools/workload-deployer:0.5.0-788f3cba
+  before_script:
+    - *vnpaycloud-auth
+  script:
+  - chmod +x _scripts/generate-envs-file
+  - chmod +x _scripts/bootstrap-namespace
+  - ./_scripts/generate-envs-file
+  - ./_scripts/bootstrap-namespace
+  only:
+    refs:
+      - master
+      - merge_request
+    changes:
+      - "namespaces.yaml"
+      - "sandboxes.yaml"
+    variables:
+      - $RUN != "all"
+  retry: 2
+  tags:
+  - ci-alpha
 
 secrets:
   stage: secret
@@ -33,7 +57,7 @@ secrets all:
   rules:
     - if: $CI_COMMIT_BRANCH == "master" && $RUN == "all"
       changes:
-        - "envs"
+        - "sandboxes.yaml"
   retry: 2
   tags:
     - ci-alpha
@@ -43,24 +67,19 @@ deploy:
   variables:
     PROVIDER: _vnpaycloud
   image:
-    name: dtzar/helm-kubectl:3.7
+    name: asia.gcr.io/teko-registry/sre/tools/workload-deployer:0.5.0-788f3cba
   script:
     - |
       apt update && apt install gettext-base -y
-      envs='envs'
-      while read environment; do
-        export ENVIRONMENT=$environment
-        echo "Deploy all services in $ENVIRONMENT"
-        envsubst < argo-cd.yaml | kubectl apply -f -
-        sleep 10
-      done < $envs
+      chmod +x _scripts/deploy-argocd
+      ./_scripts/deploy-argocd
   retry: 2
   tags:
     - ci-alpha
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       changes:
-        - "envs"
+        - "sandboxes.yaml"
 
 # .apply_template: &apply
 #   image: asia.gcr.io/teko-registry/sre/toy:2.0

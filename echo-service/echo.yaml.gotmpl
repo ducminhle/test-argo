@@ -28,9 +28,9 @@ ingress:
   tls:
   - secretName: teko-tls
     hosts:
-    - echo.{{ env "ENVIRONMENT" }}.teko.vn
+    - echo.{{ env "SANDBOX" }}.teko.vn
   rules:
-  - host: echo.{{ env "ENVIRONMENT" }}.teko.vn
+  - host: echo.{{ env "SANDBOX" }}.teko.vn
     paths:
     - path: /
       serviceName: echo-app
