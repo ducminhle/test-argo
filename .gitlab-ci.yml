@@ -14,6 +14,7 @@ provision:namespace:
   before_script:
     - *vnpaycloud-auth
   script:
+  - apk add python3
   - chmod +x _scripts/generate-envs-file
   - chmod +x _scripts/bootstrap-namespace
   - ./_scripts/generate-envs-file
@@ -56,6 +57,7 @@ secrets all:
     - ./_scripts/apply-secrets-all
   rules:
     - if: $CI_COMMIT_BRANCH == "master" && $RUN == "all"
+    - if: $CI_COMMIT_BRANCH == "master"
       changes:
         - "sandboxes.yaml"
   retry: 2
@@ -70,7 +72,7 @@ deploy:
     name: asia.gcr.io/teko-registry/sre/tools/workload-deployer:0.5.0-788f3cba
   script:
     - |
-      apt update && apt install gettext-base -y
+      apk add python3
       chmod +x _scripts/deploy-argocd
       ./_scripts/deploy-argocd
   retry: 2
