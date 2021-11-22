@@ -14,7 +14,7 @@ provision:namespace:
   before_script:
     - *vnpaycloud-auth
   script:
-  - apk add python3
+  - apk add python3 py3-pip && python3 -m pip install pyaml
   - chmod +x _scripts/generate-envs-file
   - chmod +x _scripts/bootstrap-namespace
   - ./_scripts/generate-envs-file
@@ -72,7 +72,8 @@ deploy:
     name: asia.gcr.io/teko-registry/sre/tools/workload-deployer:0.5.0-788f3cba
   script:
     - |
-      apk add python3
+      apk add python3 py3-pip
+      python3 -m pip install pyaml
       chmod +x _scripts/deploy-argocd
       ./_scripts/deploy-argocd
   retry: 2

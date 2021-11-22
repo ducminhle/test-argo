@@ -2,7 +2,6 @@
 sandboxes:
   - name: sandbox-1
     deploy-all: true
-
   # - name: sandbox-2
   #   deploy-all: true
   # - name: sandbox-3
