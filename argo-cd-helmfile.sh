@@ -148,7 +148,7 @@ case $phase in
       find **/ -name 'helmfile.yaml.raw' -exec sh -c 'cp {} $(dirname "{}")/helmfile.yaml' \;
     fi
 
-    find **/ -name 'helmfile.yaml' -exec sed -i "s/forceNamespace: /forceNamespace: ${ENVIRONMENT}-/g" {} \;
+    find **/ -name 'helmfile.yaml' -exec sed -i "s/forceNamespace: /forceNamespace: ${SANDBOX}-/g" {} \;
 
     # ensure dir(s)
     # rm -rf "${HELM_HOME}"
