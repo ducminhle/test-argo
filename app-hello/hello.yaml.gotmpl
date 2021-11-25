@@ -1,0 +1,39 @@
+imagePullSecrets:
+- name: asia.gcr.io
+
+image:
+  repository: asia.gcr.io/teko-registry/sre/toandn-demo-sandbox
+  tag: "m-b0597d31"
+
+deploys:
+- name: app
+  replicasCount: 1
+  service:
+    name: app-hello
+    type: ClusterIP
+    containerPort: 9000
+    health:
+      live: /health
+      ready: /health
+  resources:
+    requests:
+      memory: 32Mi
+      cpu: 25m
+    limits:
+      memory: 64Mi
+      cpu: 50m
+
+env:
+  env: base
+
+ingress:
+  enabled: true
+  tls:
+  - secretName: teko-tls
+    hosts:
+    - app-hello.{{ env "SANDBOX" }}.teko.vn
+  rules:
+  - host: app-hello.{{ env "SANDBOX" }}.teko.vn
+    paths:
+    - path: /
+      serviceName: app-hello
