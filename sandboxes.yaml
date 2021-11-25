@@ -4,8 +4,8 @@ sandboxes:
     deploy-all: true
   - name: sandbox-2
     deploy-all: true
-  # - name: sandbox-3
-  #   deploy-all: true
+  - name: sandbox-3
+    deploy-all: true
   # - name: sandbox-4
   #   deploy-all: true
   # - name: sandbox-5
