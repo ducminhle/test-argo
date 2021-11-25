@@ -1,2 +1,5 @@
+image:
+  tag: "m-b0597d31"
+
 env:
   env: sandbox-2
