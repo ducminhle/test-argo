@@ -1,6 +1,6 @@
 image:
   repository: asia.gcr.io/teko-registry/sre/toandn-demo-sandbox
-  tag: pr-112ebbef.9
+  tag: pr-0e5830ee.9
 
 env:
   env: test-3
