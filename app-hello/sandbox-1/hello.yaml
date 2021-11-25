@@ -1,4 +1,5 @@
 image:
+  repository: asia.gcr.io/teko-registry/sre/toandn-demo-sandbox
   tag: "m-b0597d31"
 
 env:
