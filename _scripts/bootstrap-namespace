@@ -38,7 +38,7 @@ while read env; do
         helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl diff -f - || true
         helm template ns  -f namespaces.yaml teko/teko-backend-v3 | kubectl apply  -f -
         echo "Trigger cert provision"
-        curl -X POST \
+        curl --insecure -X POST \
          -F token=${TRIGGER_TOKEN} \
          -F ref=master -F "variables[ENV]=alpha"  \
          https://git.teko.vn/api/v4/projects/1836/trigger/pipeline
