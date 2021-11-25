@@ -40,7 +40,7 @@ while read env; do
         echo "Trigger cert provision"
         curl -X POST \
          -F token=${TRIGGER_TOKEN} \
-         -F ref=master -F "variables[ENV]=dev"  \
+         -F ref=master -F "variables[ENV]=alpha"  \
          https://git.teko.vn/api/v4/projects/1836/trigger/pipeline
     fi
 done < $envs
