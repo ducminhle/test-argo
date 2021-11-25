@@ -1,0 +1,9 @@
+releases:
+- name: hello
+  namespace: app-hello
+  forceNamespace: app-hello
+  missingFileHandler: Warn
+  values:
+  - hello.yaml.gotmpl
+  - ./{{ env "SANDBOX" }}/hello.yaml
+  chart: teko/teko-backend-v2
