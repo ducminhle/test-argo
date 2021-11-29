@@ -1,6 +1,6 @@
 image:
   repository: asia.gcr.io/teko-registry/sre/toandn-demo-sandbox
-  tag: pr-ecdeceda.10
+  tag: pr-1fa8a460.10
 
 env:
   env: test-1
