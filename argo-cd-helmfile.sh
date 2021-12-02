@@ -149,6 +149,7 @@ case $phase in
     fi
 
     find **/ -name 'helmfile.yaml' -exec sed -i "s/forceNamespace: /forceNamespace: ${SANDBOX}-/g" {} \;
+    find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${SANDBOX}-/g" {} \;
 
     # ensure dir(s)
     # rm -rf "${HELM_HOME}"
@@ -257,6 +258,7 @@ case $phase in
     fi
 
     find **/ -name 'helmfile.yaml' -exec sed -i "s/forceNamespace: /forceNamespace: ${SANDBOX}-/g" {} \;
+    find **/ -name 'helmfile.yaml' -exec sed -i "s/namespace: /namespace: ${SANDBOX}-/g" {} \;
 
     ${helmfile} \
       template \
